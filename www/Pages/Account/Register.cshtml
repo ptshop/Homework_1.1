@@ -1,0 +1,71 @@
+﻿@page
+@using www.Models
+@model www.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<h1>@ViewData["Title"]</h1>
+<form method="POST" asp-antiforgery="true">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <input hidden asp-for="ReturnUrl" />
+    <div>
+        <label asp-for="Name"></label>
+        <input asp-for="Name" />
+        <span asp-validation-for="Name"></span>
+    </div>
+    <div>
+        <label asp-for="Surname"></label>
+        <input asp-for="Surname" />
+        <span asp-validation-for="Surname"></span>
+    </div>
+    <div>
+        <label asp-for="Age"></label>
+        <input asp-for="Age" />
+        <span asp-validation-for="Age"></span>
+    </div>
+    <div>
+        <label asp-for="Gender"></label>
+        <label for="maleRadio">
+            <input id="maleRadio" type="radio" asp-for="Gender" value="@Genders.Male" />
+            <span>мужской</span>
+        </label>
+        <label for="femaleRadio">
+            <input id="femaleRadio" type="radio" asp-for="Gender" value="@Genders.Female" />
+            <span>женский</span>
+        </label>
+        <span asp-validation-for="Gender"></span>
+    </div>
+    <div>
+        <label asp-for="Interest"></label>
+        <input asp-for="Interest" />
+        <span asp-validation-for="Interest"></span>
+    </div>
+    <div>
+        <label asp-for="City"></label>
+        <input asp-for="City" />
+        <span asp-validation-for="City"></span>
+    </div>
+    <div>
+        <label asp-for="Login"></label>
+        <input asp-for="Login" />
+        <span asp-validation-for="Login"></span>
+    </div>
+    <div>
+        <label asp-for="Password"></label>
+        <input asp-for="Password" />
+        <span asp-validation-for="Password"></span>
+    </div>
+    <div>
+        <label asp-for="PasswordConfirm"></label>
+        <input asp-for="PasswordConfirm" />
+        <span asp-validation-for="PasswordConfirm"></span>
+    </div>
+    <input type="submit" value="Зарегистрироваться" />
+</form>
+
+@section scripts
+{
+    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+}

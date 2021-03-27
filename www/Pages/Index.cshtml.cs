@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
 namespace www.Pages
@@ -14,7 +15,6 @@ namespace www.Pages
 
         public void OnGet()
         {
-
         }
     }
 }
