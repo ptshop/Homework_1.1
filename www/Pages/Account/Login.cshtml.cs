@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using www.Pages.Account.Extensions;
+using www.Services.Users;
 
 namespace www.Pages.Account
 {
@@ -22,16 +23,22 @@ namespace www.Pages.Account
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        public async Task<IActionResult> OnPostAsync()
+        public async Task<IActionResult> OnPostAsync([FromServices] IUserService userService)
         {
             if (ModelState.IsValid)
             {
-                await HttpContext.SignInCookieAsync(Login);
+                var result = await userService.LoginAsync(Login, Password);
+                if (result.Success)
+                {
+                    await HttpContext.SignInCookieAsync(Login);
 
-                if (!string.IsNullOrEmpty(ReturnUrl))
-                    return Redirect(ReturnUrl);
+                    if (!string.IsNullOrEmpty(ReturnUrl))
+                        return Redirect(ReturnUrl);
 
-                return RedirectToPage("/Index");
+                    return RedirectToPage("/Index");
+                }
+
+                ModelState.AddModelError(string.Empty, result.Error);
             }
 
             return Page();
