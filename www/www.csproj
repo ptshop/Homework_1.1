@@ -10,5 +10,7 @@
     <Folder Include="Services\Users\" />
     <Folder Include="Pages\Account\" />
     <Folder Include="Pages\Account\Extensions\" />
+    <Folder Include="DataAccess\" />
+    <Folder Include="Cryptography\" />
   </ItemGroup>
 </Project>

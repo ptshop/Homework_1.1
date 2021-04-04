@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using www.Cryptography;
+using www.DataAccess;
 using www.Services.Users;
 
 namespace www
@@ -28,7 +30,11 @@ namespace www
                     options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/account/login");
                 });
 
+            services.AddTransient<ICryptoProvider, CryptoProvider>();
+
             services.AddTransient<IUserService, UserService>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
 
             services.AddRazorPages();
         }
