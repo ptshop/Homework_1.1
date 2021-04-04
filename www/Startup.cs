@@ -1,8 +1,12 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using www.Cryptography;
+using www.DataAccess;
+using www.Services.Users;
 
 namespace www
 {
@@ -18,6 +22,20 @@ namespace www
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddRouting(options => options.LowercaseUrls = true);
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/account/login");
+                });
+
+            services.AddTransient<ICryptoProvider, CryptoProvider>();
+
+            services.AddTransient<IUserService, UserService>();
+
+            services.AddTransient<IUserRepository, UserRepository>();
+
             services.AddRazorPages();
         }
 
@@ -40,6 +58,7 @@ namespace www
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -4,4 +4,13 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Services\" />
+    <Folder Include="Models\" />
+    <Folder Include="Services\Users\" />
+    <Folder Include="Pages\Account\" />
+    <Folder Include="Pages\Account\Extensions\" />
+    <Folder Include="DataAccess\" />
+    <Folder Include="Cryptography\" />
+  </ItemGroup>
 </Project>
