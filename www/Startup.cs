@@ -34,7 +34,9 @@ namespace www
 
             services.AddTransient<IUserService, UserService>();
 
-            services.AddTransient<IUserRepository, UserRepository>();
+            // TODO: Вынести в конфиг
+            var connectionString = "server=localhost;Port=3306;user id=social_network_user;Password=social_network_user;persistsecurityinfo=True;database=social_network;CharSet=utf8;SslMode=none";
+            services.AddTransient<IUserRepository, UserRepository>(p => new UserRepository(connectionString));
 
             services.AddRazorPages();
         }
