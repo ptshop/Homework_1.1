@@ -7,5 +7,6 @@ namespace www.Services.Users
     {
         Task<Result> RegisterAsync(string login, string password, string name, string surname, int age, Genders gender, string interests, string city);
         Task<Result> LoginAsync(string login, string password);
+        Task<User> FindUserAsync(int id);
     }
 }

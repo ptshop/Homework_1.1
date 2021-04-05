@@ -53,5 +53,10 @@ namespace www.Services.Users
 
             return await Task.FromResult(Result.ErrorResult("Неверный логин или пароль"));
         }
+
+        public async Task<User> FindUserAsync(int id)
+        {
+            return await userRepository.FindAsync(id);
+        }
     }
 }

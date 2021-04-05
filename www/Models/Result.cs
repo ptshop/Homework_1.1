@@ -1,6 +1,6 @@
 ﻿namespace www.Models
 {
-    public class Result
+    public record Result
     {
         public bool Success { get; private init; }
         public string Error { get; private init; }
