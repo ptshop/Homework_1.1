@@ -60,7 +60,7 @@ namespace www.Pages.Account
                 var result = await userService.RegisterAsync(Login, Password, Name, Surname, Age, Gender.Value, Interest, City);
                 if (result.Success)
                 {
-                    await HttpContext.SignInCookieAsync(Login);
+                    await HttpContext.SignInCookieAsync(result.Value);
 
                     if (!string.IsNullOrEmpty(ReturnUrl))
                         return Redirect(ReturnUrl);

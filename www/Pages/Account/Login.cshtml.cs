@@ -30,7 +30,7 @@ namespace www.Pages.Account
                 var result = await userService.LoginAsync(Login, Password);
                 if (result.Success)
                 {
-                    await HttpContext.SignInCookieAsync(Login);
+                    await HttpContext.SignInCookieAsync(result.Value);
 
                     if (!string.IsNullOrEmpty(ReturnUrl))
                         return Redirect(ReturnUrl);

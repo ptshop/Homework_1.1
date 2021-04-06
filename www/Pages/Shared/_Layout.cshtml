@@ -19,6 +19,12 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
+                            @{
+                                var userId = Context.User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+                            }
+                            <a class="nav-link text-dark" app-area="" asp-page="/Account/Profile" asp-route-id="@userId">Моя страница</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-page="/Index">Home</a>
                         </li>
                         <li class="nav-item">

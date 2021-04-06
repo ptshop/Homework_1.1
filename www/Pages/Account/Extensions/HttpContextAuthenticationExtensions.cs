@@ -4,16 +4,18 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using www.Models;
 
 namespace www.Pages.Account.Extensions
 {
     public static class HttpContextAuthenticationExtensions
     {
-        public static async Task SignInCookieAsync(this HttpContext httpContext, string login)
+        public static async Task SignInCookieAsync(this HttpContext httpContext, User user)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimsIdentity.DefaultNameClaimType, login)
+                new Claim(ClaimsIdentity.DefaultNameClaimType, user.Login),
+                new Claim("Id", user.Id.ToString())
             };
 
             ClaimsIdentity identity = new ClaimsIdentity(claims, "ApplicationCookie", ClaimsIdentity.DefaultNameClaimType, ClaimsIdentity.DefaultRoleClaimType);

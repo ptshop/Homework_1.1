@@ -5,8 +5,9 @@ namespace www.Services.Users
 {
     public interface IUserService
     {
-        Task<Result> RegisterAsync(string login, string password, string name, string surname, int age, Genders gender, string interests, string city);
-        Task<Result> LoginAsync(string login, string password);
+        Task<Result<User>> RegisterAsync(string login, string password, string name, string surname, int age, Genders gender, string interests, string city);
+        Task<Result<User>> LoginAsync(string login, string password);
         Task<User> FindUserAsync(int id);
+        Task<User> FindUserAsync(string login);
     }
 }
