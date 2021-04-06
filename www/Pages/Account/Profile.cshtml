@@ -1,0 +1,34 @@
+﻿@page "{id}"
+@using www.Pages.Account.Extensions
+@model www.Pages.Account.ProfileModel
+@{
+    ViewData["Title"] = "Профиль";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div>
+    <div>
+        <label asp-for="Name"></label>
+        <div>@Model.Name</div>
+    </div>
+    <div>
+        <label asp-for="Surname"></label>
+        <div>@Model.Surname</div>
+    </div>
+    <div>
+        <label asp-for="Age"></label>
+        <div>@Model.Age</div>
+    </div>
+    <div>
+        <label asp-for="Gender"></label>
+        <div>@Model.Gender.Display()</div>
+    </div>
+    <div>
+        <label asp-for="Interest"></label>
+        <div>@Model.Interest</div>
+    </div>
+    <div>
+        <label asp-for="City"></label>
+        <div>@Model.City</div>
+    </div>
+</div>

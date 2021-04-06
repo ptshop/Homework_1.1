@@ -1,5 +1,6 @@
 ﻿@page
 @using www.Models
+@using www.Pages.Account.Extensions
 @model www.Pages.Account.RegisterModel
 @{
     ViewData["Title"] = "Регистрация";
@@ -28,11 +29,11 @@
         <label asp-for="Gender"></label>
         <label for="maleRadio">
             <input id="maleRadio" type="radio" asp-for="Gender" value="@Genders.Male" />
-            <span>мужской</span>
+            <span>@Genders.Male.Display()</span>
         </label>
         <label for="femaleRadio">
             <input id="femaleRadio" type="radio" asp-for="Gender" value="@Genders.Female" />
-            <span>женский</span>
+            <span>@Genders.Female.Display()</span>
         </label>
         <span asp-validation-for="Gender"></span>
     </div>
@@ -66,6 +67,5 @@
 
 @section scripts
 {
-    <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
-    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.min.js"></script>
+    <partial name="_ValidationScriptsPartial" />
 }
