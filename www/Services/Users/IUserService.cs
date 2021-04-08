@@ -9,5 +9,6 @@ namespace www.Services.Users
         Task<Result<User>> LoginAsync(string login, string password);
         Task<User> FindUserAsync(int id);
         Task<User> FindUserAsync(string login);
+        Task<User[]> FindFriendsAsync(int id);
     }
 }

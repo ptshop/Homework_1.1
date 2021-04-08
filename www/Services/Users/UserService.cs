@@ -57,5 +57,7 @@ namespace www.Services.Users
         public Task<User> FindUserAsync(int id) => userRepository.FindAsync(id);
 
         public Task<User> FindUserAsync(string login) => userRepository.FindAsync(login);
+
+        public Task<User[]> FindFriendsAsync(int id) => userRepository.FindFriendsAsync(id);
     }
 }
