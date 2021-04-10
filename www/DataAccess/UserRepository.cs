@@ -14,7 +14,7 @@ namespace www.DataAccess
             this.connectionString = connectionString;
         }
 
-        public async Task<User> FindAsync(int id)
+        public async Task<User> GetUserAsync(int id)
         {
             var query = "SELECT * FROM Users WHERE Id = @Id;";
 
@@ -45,7 +45,7 @@ namespace www.DataAccess
             return null;
         }
 
-        public async Task<User> FindAsync(string login)
+        public async Task<User> GetUserAsync(string login)
         {
             var query = "SELECT * FROM Users WHERE Login = @Login;";
 
@@ -76,7 +76,7 @@ namespace www.DataAccess
             return null;
         }
 
-        public async Task<bool> AddAsync(User user)
+        public async Task<bool> AddUserAsync(User user)
         {
             var query =
 @"
@@ -108,7 +108,31 @@ VALUES (@Login, @PasswordHash, @Name, @Surname, @Age, @Gender, @Interest, @City)
             }
         }
 
-        public async Task<User[]> FindFriendsAsync(int id)
+        public async Task<User[]> GetUsersAsync()
+        {
+            var query = "SELECT Id, Name, Surname FROM Users;";
+            await using var connection = new MySqlConnection(connectionString);
+
+            await using var command = new MySqlCommand(query, connection);
+
+            await connection.OpenAsync();
+
+            var users = new List<User>();
+            await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+            while (await dataReader.ReadAsync())
+            {
+                users.Add(new User()
+                {
+                    Id = dataReader.GetInt32("Id"),
+                    Name = dataReader.GetString("Name"),
+                    Surname = dataReader.GetString("Surname")
+                });
+            }
+
+            return users.ToArray();
+        }
+
+        public async Task<User[]> GetFriendsAsync(int id)
         {
             var query =
 @"

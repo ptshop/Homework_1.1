@@ -34,7 +34,7 @@ namespace www.Pages.Account
 
         public async Task<IActionResult> OnGetAsync([FromServices] IUserService userService)
         {
-            var user = await userService.FindUserAsync(Id);
+            var user = await userService.GetUserAsync(Id);
             if (user == null)
                 return NotFound();
 

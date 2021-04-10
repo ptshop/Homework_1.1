@@ -5,9 +5,10 @@ namespace www.DataAccess
 {
     public interface IUserRepository
     {
-        Task<User> FindAsync(int id);
-        Task<User> FindAsync(string login);
-        Task<bool> AddAsync(User user);
-        Task<User[]> FindFriendsAsync(int id);
+        Task<User> GetUserAsync(int id);
+        Task<User> GetUserAsync(string login);
+        Task<bool> AddUserAsync(User user);
+        Task<User[]> GetUsersAsync();
+        Task<User[]> GetFriendsAsync(int id);
     }
 }

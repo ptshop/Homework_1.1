@@ -8,16 +8,13 @@ using www.Services.Users;
 namespace www.Pages.Account
 {
     [Authorize]
-    public class FriendsModel : PageModel
+    public class UsersModel : PageModel
     {
-        [BindProperty(SupportsGet = true)]
-        public int Id { get; set; }
-
         public User[] Users { get; set; }
 
         public async Task<IActionResult> OnGetAsync([FromServices] IUserService userService)
         {
-            Users = await userService.GetFriendsAsync(Id);
+            Users = await userService.GetUsersAsync();
 
             return Page();
         }

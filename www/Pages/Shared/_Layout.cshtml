@@ -1,7 +1,7 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 @{
-    var userId = Context.User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+    var userId = User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
 }
 <head>
     <meta charset="utf-8" />
@@ -26,6 +26,9 @@
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Account/Friends" asp-route-id="@userId">Друзья</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-page="/Account/Users">Люди</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Index">Home</a>

@@ -18,7 +18,7 @@ namespace www.Services.Users
 
         public async Task<Result<User>> RegisterAsync(string login, string password, string name, string surname, int age, Genders gender, string interests, string city)
         {
-            var user = await userRepository.FindAsync(login);
+            var user = await userRepository.GetUserAsync(login);
             if (user != null)
                 return Result<User>.ErrorResult($"Пользователь с логином \"{login}\" уже существует");
 
@@ -35,7 +35,7 @@ namespace www.Services.Users
                 City = city
             };
 
-            var userAdded = await userRepository.AddAsync(user);
+            var userAdded = await userRepository.AddUserAsync(user);
             if (!userAdded)
                 return Result<User>.ErrorResult("Регистрация завершилась неуспешно");
 
@@ -44,7 +44,7 @@ namespace www.Services.Users
 
         public async Task<Result<User>> LoginAsync(string login, string password)
         {
-            var user = await userRepository.FindAsync(login);
+            var user = await userRepository.GetUserAsync(login);
             if (user != null)
             {
                 if (cryptoProvider.VerifyPassword(password, user.PasswordHash))
@@ -54,10 +54,12 @@ namespace www.Services.Users
             return await Task.FromResult(Result<User>.ErrorResult("Неверный логин или пароль"));
         }
 
-        public Task<User> FindUserAsync(int id) => userRepository.FindAsync(id);
+        public Task<User> GetUserAsync(int id) => userRepository.GetUserAsync(id);
 
-        public Task<User> FindUserAsync(string login) => userRepository.FindAsync(login);
+        public Task<User> GetUserAsync(string login) => userRepository.GetUserAsync(login);
 
-        public Task<User[]> FindFriendsAsync(int id) => userRepository.FindFriendsAsync(id);
+        public Task<User[]> GetUsersAsync() => userRepository.GetUsersAsync();
+
+        public Task<User[]> GetFriendsAsync(int id) => userRepository.GetFriendsAsync(id);
     }
 }
