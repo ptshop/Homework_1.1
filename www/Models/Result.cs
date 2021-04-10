@@ -1,15 +1,31 @@
-﻿namespace www.Models
+﻿using System;
+
+namespace www.Models
 {
-    public record Result<T>
+    public class Result
     {
         public bool Success { get; private init; }
-        public T Value { get; private init; }
         public string Error { get; private init; }
 
-        public static Result<T> SuccessResult(T value) => new() { Success = true, Value = value, Error = "" };
-        public static Result<T> ErrorResult(string error) => new() { Success = false, Error = error };
+        public static Result SuccessResult { get; } = new();
+        public static Result FailedResult(string error) => new(error);
 
-        private Result()
-        {}
+        public void Deconstruct(out bool success, out string error) => (success, error) = (Success, Error);
+
+        protected Result() => (Success, Error) = (true, "");
+        protected Result(string error) => (Success, Error) = (false, error);
+    }
+
+    public class Result<TValue> : Result
+    {
+        public TValue Value { get; private init; }
+
+        public static new Result<TValue> SuccessResult(TValue value) => new(value);
+        public static new Result<TValue> FailedResult(string error) => new(error);
+
+        public void Deconstruct(out bool success, out TValue value, out string error) => (success, value, error) = (Success, Value, Error);
+
+        protected Result(TValue value) : base() => Value = value;
+        protected Result(string error) : base(error) => Value = default;
     }
 }

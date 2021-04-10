@@ -11,5 +11,7 @@ namespace www.Services.Users
         Task<User> GetUserAsync(string login);
         Task<User[]> GetUsersAsync();
         Task<User[]> GetFriendsAsync(int id);
+        Task<bool> UsersAreFriendsAsync(int id1, int id2);
+        Task<Result> MakeFriendsAsync(int userId, int friendId);
     }
 }

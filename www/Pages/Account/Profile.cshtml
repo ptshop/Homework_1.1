@@ -1,4 +1,4 @@
-﻿@page "{id}"
+﻿@page "{id}/{handler?}"
 @using www.Pages.Account.Extensions
 @model www.Pages.Account.ProfileModel
 @{
@@ -31,4 +31,34 @@
         <label asp-for="City"></label>
         <div>@Model.City</div>
     </div>
+    <div id="isFriend" style="@(!Model.IsFriend ? "display: none;" : "")">Ваш друг</div>
+    @if (Model.CanAddToFriends)
+    {
+        <button id="makeFriend" class="btn btn-primary">Добавить в друзья</button>
+        <div id="makeFriendError"></div>
+    }
 </div>
+
+@if (Model.CanAddToFriends)
+{
+    @section scripts{
+    <script>
+            $(function () {
+                $('#makeFriend').on('click', function () {
+                    $.getJSON('/account/profile/@Model.Id/AddToFriends')
+                        .done(function (result) {
+                            if (result.success) {
+                                $('#makeFriend').hide();
+                                $('#isFriend').show();
+                            } else {
+                                $('#makeFriendError').text(result.error);
+                            }
+                        })
+                        .fail(function () {
+                            $('#makeFriendError').text('Не удалось добавить @Model.Name @Model.Surname в друзья');
+                        });
+                });
+            });
+    </script>
+    }
+}

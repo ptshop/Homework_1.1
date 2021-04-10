@@ -136,17 +136,15 @@ VALUES (@Login, @PasswordHash, @Name, @Surname, @Age, @Gender, @Interest, @City)
         {
             var query =
 @"
-SELECT Users.Id, Users.Name, Users.Surname
-    FROM Users
-    JOIN UsersToUsers ON UsersToUsers.FriendId = Users.Id
-    WHERE UsersToUsers.UserId = @Id
-UNION
-SELECT Users.Id, Users.Name, Users.Surname
-    FROM Users
-    JOIN UsersToUsers ON UsersToUsers.UserId = Users.Id
-    WHERE UsersToUsers.FriendId = @Id
-ORDER BY Id;
+SELECT u.Id, u.Name, u.Surname
+  FROM Users u
+  JOIN UsersToUsers utu ON
+    utu.UserId = @Id  AND utu.FriendId = u.Id OR
+    utu.UserId = u.Id AND utu.FriendId = @Id 
+  WHERE
+    utu.UserId = @Id OR utu.FriendId = @Id;
 ";
+
             await using var connection = new MySqlConnection(connectionString);
 
             await using var command = new MySqlCommand(query, connection);
@@ -167,6 +165,61 @@ ORDER BY Id;
             }
 
             return users.ToArray();
+        }
+        
+        public async Task<bool> UsersAreFriendsAsync(int id1, int id2)
+        {
+            var query =
+@"
+SELECT EXISTS
+(
+  SELECT 1 FROM UsersToUsers
+  WHERE
+    UserId = @Id1 AND FriendId = @Id2 OR
+    UserId = @Id2 AND FriendId = @Id1
+);
+";
+            await using var connection = new MySqlConnection(connectionString);
+
+            await using var command = new MySqlCommand(query, connection);
+            command.Parameters.Add("Id1", MySqlDbType.Int32).Value = id1;
+            command.Parameters.Add("Id2", MySqlDbType.Int32).Value = id2;
+
+            await connection.OpenAsync();
+
+            await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+            if (await dataReader.ReadAsync())
+            {
+                return dataReader.GetInt32(0) != 0;
+            }
+
+            return false;
+        }
+
+        public async Task<bool> MakeFriendsAsync(int userId, int friendId)
+        {
+            var query =
+@"
+INSERT INTO UsersToUsers (UserId, FriendId)
+VALUES (@UserId, @FriendId);
+";
+            await using var connection = new MySqlConnection(connectionString);
+
+            await using var command = new MySqlCommand(query, connection);
+            command.Parameters.Add("UserId", MySqlDbType.Int32).Value = userId;
+            command.Parameters.Add("FriendId", MySqlDbType.Int32).Value = friendId;
+
+            await connection.OpenAsync();
+
+            try
+            {
+                return await command.ExecuteNonQueryAsync() > 0;
+            }
+            catch
+            {
+                // TODO: log
+                return false;
+            }
         }
     }
 }

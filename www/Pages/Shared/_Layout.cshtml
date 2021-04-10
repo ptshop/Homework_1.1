@@ -1,7 +1,8 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 @{
-    var userId = User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+    @using www.Pages.Account.Extensions;
+    var userId = Context.GetCurrentUserId();
 }
 <head>
     <meta charset="utf-8" />
@@ -25,7 +26,7 @@
                             <a class="nav-link text-dark" asp-page="/Account/Profile" asp-route-id="@userId">Моя страница</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-page="/Account/Friends" asp-route-id="@userId">Друзья</a>
+                            <a class="nav-link text-dark" asp-page="/Account/Friends">Друзья</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-page="/Account/Users">Люди</a>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using www.Models;
+using www.Pages.Account.Extensions;
 using www.Services.Users;
 
 namespace www.Pages.Account
@@ -10,14 +11,13 @@ namespace www.Pages.Account
     [Authorize]
     public class FriendsModel : PageModel
     {
-        [BindProperty(SupportsGet = true)]
-        public int Id { get; set; }
-
-        public User[] Users { get; set; }
+        public User[] Friends { get; set; }
 
         public async Task<IActionResult> OnGetAsync([FromServices] IUserService userService)
         {
-            Users = await userService.GetFriendsAsync(Id);
+            var currentUserId = HttpContext.GetCurrentUserId();
+
+            Friends = await userService.GetFriendsAsync(currentUserId);
 
             return Page();
         }

@@ -10,5 +10,7 @@ namespace www.DataAccess
         Task<bool> AddUserAsync(User user);
         Task<User[]> GetUsersAsync();
         Task<User[]> GetFriendsAsync(int id);
+        Task<bool> UsersAreFriendsAsync(int id1, int id2);
+        Task<bool> MakeFriendsAsync(int userId, int friendId);
     }
 }
