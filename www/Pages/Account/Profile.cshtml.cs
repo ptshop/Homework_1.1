@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using www.Models;
+using www.Pages.Account.Extensions;
 using www.Services.Users;
 
 namespace www.Pages.Account
@@ -32,9 +33,15 @@ namespace www.Pages.Account
         [Display(Name = "Город")]
         public string City { get; set; }
 
+        public bool IsFriend { get; private set; }
+
+        public bool CanAddToFriends { get; private set; }
+
         public async Task<IActionResult> OnGetAsync([FromServices] IUserService userService)
         {
-            var user = await userService.FindUserAsync(Id);
+            var currentUserId = HttpContext.GetCurrentUserId();
+
+            var user = await userService.GetUserAsync(Id);
             if (user == null)
                 return NotFound();
 
@@ -46,7 +53,26 @@ namespace www.Pages.Account
             Interest = user.Interest;
             City = user.City;
 
+            if (user.Id == currentUserId)
+            {
+                IsFriend = false;
+                CanAddToFriends = false;
+            }
+            else
+            {
+                IsFriend = await userService.UsersAreFriendsAsync(user.Id, currentUserId);
+                CanAddToFriends = !IsFriend;
+            }
+
             return Page();
+        }
+
+        public async Task<IActionResult> OnGetAddToFriendsAsync([FromServices] IUserService userService)
+        {
+            var currentUserId = HttpContext.GetCurrentUserId();
+
+            var (success, error) = await userService.MakeFriendsAsync(currentUserId, Id);
+            return new JsonResult(new { success, error });
         }
     }
 }

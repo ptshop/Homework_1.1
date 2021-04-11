@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -27,6 +28,15 @@ namespace www.Pages.Account.Extensions
         public static async Task SignOutCookieAsync(this HttpContext httpContext)
         {
             await httpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+
+        public static int GetCurrentUserId(this HttpContext httpContext)
+        {
+            var idString = httpContext.User?.Claims.FirstOrDefault(c => c.Type == "Id")?.Value;
+            if (idString != null && int.TryParse(idString, out var id))
+                return id;
+
+            return 0;
         }
     }
 }

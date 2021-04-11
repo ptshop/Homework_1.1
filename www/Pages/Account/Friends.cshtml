@@ -1,0 +1,13 @@
+﻿@page
+@model www.Pages.Account.FriendsModel
+@{
+    ViewData["Title"] = "Друзья";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div>
+    @foreach (var user in Model.Friends)
+    {
+        <a class="nav-link text-dark" asp-page="/Account/Profile" asp-route-id="@user.Id">@user.Name @user.Surname</a>
+    }
+</div>
