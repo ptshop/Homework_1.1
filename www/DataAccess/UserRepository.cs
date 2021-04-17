@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
 using www.Models;
 
@@ -8,38 +10,47 @@ namespace www.DataAccess
     public class UserRepository : IUserRepository
     {
         private readonly string connectionString;
+        private readonly ILogger<IUserRepository> logger;
 
-        public UserRepository(string connectionString)
+        public UserRepository(string connectionString, ILogger<IUserRepository> logger)
         {
             this.connectionString = connectionString;
+            this.logger = logger;
         }
 
         public async Task<User> GetUserAsync(int id)
         {
-            var query = "SELECT * FROM Users WHERE Id = @Id;";
-
-            await using var connection = new MySqlConnection(connectionString);
-
-            await using var command = new MySqlCommand(query, connection);
-            command.Parameters.Add("Id", MySqlDbType.Int32).Value = id;
-
-            await connection.OpenAsync();
-
-            await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-            if (await dataReader.ReadAsync())
+            try
             {
-                return new User()
+                var query = "SELECT * FROM Users WHERE Id = @Id;";
+
+                await using var connection = new MySqlConnection(connectionString);
+
+                await using var command = new MySqlCommand(query, connection);
+                command.Parameters.Add("Id", MySqlDbType.Int32).Value = id;
+
+                await connection.OpenAsync();
+
+                await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                if (await dataReader.ReadAsync())
                 {
-                    Id = dataReader.GetInt32("Id"),
-                    Login = dataReader.GetString("Login"),
-                    PasswordHash = dataReader.GetString("PasswordHash"),
-                    Name = dataReader.GetString("Name"),
-                    Surname = dataReader.GetString("Surname"),
-                    Age = dataReader.GetInt32("Age"),
-                    Gender = (Genders)dataReader.GetInt32("Gender"),
-                    Interest = !dataReader.IsDBNull(dataReader.GetOrdinal("Interest")) ? dataReader.GetString("Interest") : null,
-                    City = !dataReader.IsDBNull(dataReader.GetOrdinal("City")) ? dataReader.GetString("City") : null
-                };
+                    return new User()
+                    {
+                        Id = dataReader.GetInt32("Id"),
+                        Login = dataReader.GetString("Login"),
+                        PasswordHash = dataReader.GetString("PasswordHash"),
+                        Name = dataReader.GetString("Name"),
+                        Surname = dataReader.GetString("Surname"),
+                        Age = dataReader.GetInt32("Age"),
+                        Gender = (Genders)dataReader.GetInt32("Gender"),
+                        Interest = !dataReader.IsDBNull(dataReader.GetOrdinal("Interest")) ? dataReader.GetString("Interest") : null,
+                        City = !dataReader.IsDBNull(dataReader.GetOrdinal("City")) ? dataReader.GetString("City") : null
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Get user by ID failed");
             }
 
             return null;
@@ -47,30 +58,37 @@ namespace www.DataAccess
 
         public async Task<User> GetUserAsync(string login)
         {
-            var query = "SELECT * FROM Users WHERE Login = @Login;";
-
-            await using var connection = new MySqlConnection(connectionString);
-
-            await using var command = new MySqlCommand(query, connection);
-            command.Parameters.Add("Login", MySqlDbType.String).Value = login;
-
-            await connection.OpenAsync();
-
-            await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-            if (await dataReader.ReadAsync())
+            try
             {
-                return new User()
+                var query = "SELECT * FROM Users WHERE Login = @Login;";
+
+                await using var connection = new MySqlConnection(connectionString);
+
+                await using var command = new MySqlCommand(query, connection);
+                command.Parameters.Add("Login", MySqlDbType.String).Value = login;
+
+                await connection.OpenAsync();
+
+                await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                if (await dataReader.ReadAsync())
                 {
-                    Id = dataReader.GetInt32("Id"),
-                    Login = dataReader.GetString("Login"),
-                    PasswordHash = dataReader.GetString("PasswordHash"),
-                    Name = dataReader.GetString("Name"),
-                    Surname = dataReader.GetString("Surname"),
-                    Age = dataReader.GetInt32("Age"),
-                    Gender = (Genders)dataReader.GetInt32("Gender"),
-                    Interest = !dataReader.IsDBNull(dataReader.GetOrdinal("Interest")) ? dataReader.GetString("Interest") : null,
-                    City = !dataReader.IsDBNull(dataReader.GetOrdinal("City")) ? dataReader.GetString("City") : null
-                };
+                    return new User()
+                    {
+                        Id = dataReader.GetInt32("Id"),
+                        Login = dataReader.GetString("Login"),
+                        PasswordHash = dataReader.GetString("PasswordHash"),
+                        Name = dataReader.GetString("Name"),
+                        Surname = dataReader.GetString("Surname"),
+                        Age = dataReader.GetInt32("Age"),
+                        Gender = (Genders)dataReader.GetInt32("Gender"),
+                        Interest = !dataReader.IsDBNull(dataReader.GetOrdinal("Interest")) ? dataReader.GetString("Interest") : null,
+                        City = !dataReader.IsDBNull(dataReader.GetOrdinal("City")) ? dataReader.GetString("City") : null
+                    };
+                }
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Get user by login failed");
             }
 
             return null;
@@ -78,63 +96,75 @@ namespace www.DataAccess
 
         public async Task<bool> AddUserAsync(User user)
         {
-            var query =
+            try
+            {
+                var query =
 @"
 INSERT INTO Users (Login, PasswordHash, Name, Surname, Age, Gender, Interest, City)
 VALUES (@Login, @PasswordHash, @Name, @Surname, @Age, @Gender, @Interest, @City);
 ";
-            await using var connection = new MySqlConnection(connectionString);
+                await using var connection = new MySqlConnection(connectionString);
 
-            await using var command = new MySqlCommand(query, connection);
-            command.Parameters.Add("Login", MySqlDbType.String).Value = user.Login;
-            command.Parameters.Add("PasswordHash", MySqlDbType.String).Value = user.PasswordHash;
-            command.Parameters.Add("Name", MySqlDbType.String).Value = user.Name;
-            command.Parameters.Add("Surname", MySqlDbType.String).Value = user.Surname;
-            command.Parameters.Add("Age", MySqlDbType.UInt32).Value = user.Age;
-            command.Parameters.Add("Gender", MySqlDbType.UInt16).Value = (int)user.Gender;
-            command.Parameters.Add("Interest", MySqlDbType.String).Value = user.Interest;
-            command.Parameters.Add("City", MySqlDbType.String).Value = user.City;
+                await using var command = new MySqlCommand(query, connection);
+                command.Parameters.Add("Login", MySqlDbType.String).Value = user.Login;
+                command.Parameters.Add("PasswordHash", MySqlDbType.String).Value = user.PasswordHash;
+                command.Parameters.Add("Name", MySqlDbType.String).Value = user.Name;
+                command.Parameters.Add("Surname", MySqlDbType.String).Value = user.Surname;
+                command.Parameters.Add("Age", MySqlDbType.UInt32).Value = user.Age;
+                command.Parameters.Add("Gender", MySqlDbType.UInt16).Value = (int)user.Gender;
+                command.Parameters.Add("Interest", MySqlDbType.String).Value = user.Interest;
+                command.Parameters.Add("City", MySqlDbType.String).Value = user.City;
 
-            await connection.OpenAsync();
+                await connection.OpenAsync();
 
-            try
-            {
                 return await command.ExecuteNonQueryAsync() > 0;
             }
-            catch
+            catch (Exception e)
             {
-                // TODO: log
+                logger.LogError(e, "Add user failed");
+
                 return false;
             }
         }
 
         public async Task<User[]> GetUsersAsync()
         {
-            var query = "SELECT Id, Name, Surname FROM Users;";
-            await using var connection = new MySqlConnection(connectionString);
-
-            await using var command = new MySqlCommand(query, connection);
-
-            await connection.OpenAsync();
-
-            var users = new List<User>();
-            await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-            while (await dataReader.ReadAsync())
+            try
             {
-                users.Add(new User()
+                var query = "SELECT Id, Name, Surname FROM Users;";
+                await using var connection = new MySqlConnection(connectionString);
+
+                await using var command = new MySqlCommand(query, connection);
+
+                await connection.OpenAsync();
+
+                var users = new List<User>();
+                await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                while (await dataReader.ReadAsync())
                 {
-                    Id = dataReader.GetInt32("Id"),
-                    Name = dataReader.GetString("Name"),
-                    Surname = dataReader.GetString("Surname")
-                });
+                    users.Add(new User()
+                    {
+                        Id = dataReader.GetInt32("Id"),
+                        Name = dataReader.GetString("Name"),
+                        Surname = dataReader.GetString("Surname")
+                    });
+                }
+
+                return users.ToArray();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Get users failed");
             }
 
-            return users.ToArray();
+            return Array.Empty<User>();
         }
 
         public async Task<User[]> GetFriendsAsync(int id)
         {
-            var query =
+            try
+            {
+                var query =
 @"
 SELECT u.Id, u.Name, u.Surname
   FROM Users u
@@ -145,31 +175,40 @@ SELECT u.Id, u.Name, u.Surname
     utu.UserId = @Id OR utu.FriendId = @Id;
 ";
 
-            await using var connection = new MySqlConnection(connectionString);
+                await using var connection = new MySqlConnection(connectionString);
 
-            await using var command = new MySqlCommand(query, connection);
-            command.Parameters.Add("Id", MySqlDbType.Int32).Value = id;
+                await using var command = new MySqlCommand(query, connection);
+                command.Parameters.Add("Id", MySqlDbType.Int32).Value = id;
 
-            await connection.OpenAsync();
+                await connection.OpenAsync();
 
-            var users = new List<User>();
-            await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-            while (await dataReader.ReadAsync())
-            {
-                users.Add(new User()
+                var users = new List<User>();
+                await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                while (await dataReader.ReadAsync())
                 {
-                    Id = dataReader.GetInt32("Id"),
-                    Name = dataReader.GetString("Name"),
-                    Surname = dataReader.GetString("Surname")
-                });
+                    users.Add(new User()
+                    {
+                        Id = dataReader.GetInt32("Id"),
+                        Name = dataReader.GetString("Name"),
+                        Surname = dataReader.GetString("Surname")
+                    });
+                }
+
+                return users.ToArray();
+            }
+            catch (Exception e)
+            {
+                logger.LogError(e, "Get friends failed");
             }
 
-            return users.ToArray();
+            return Array.Empty<User>();
         }
         
         public async Task<bool> UsersAreFriendsAsync(int id1, int id2)
         {
-            var query =
+            try
+            {
+                var query =
 @"
 SELECT EXISTS
 (
@@ -179,18 +218,23 @@ SELECT EXISTS
     UserId = @Id2 AND FriendId = @Id1
 );
 ";
-            await using var connection = new MySqlConnection(connectionString);
+                await using var connection = new MySqlConnection(connectionString);
 
-            await using var command = new MySqlCommand(query, connection);
-            command.Parameters.Add("Id1", MySqlDbType.Int32).Value = id1;
-            command.Parameters.Add("Id2", MySqlDbType.Int32).Value = id2;
+                await using var command = new MySqlCommand(query, connection);
+                command.Parameters.Add("Id1", MySqlDbType.Int32).Value = id1;
+                command.Parameters.Add("Id2", MySqlDbType.Int32).Value = id2;
 
-            await connection.OpenAsync();
+                await connection.OpenAsync();
 
-            await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-            if (await dataReader.ReadAsync())
+                await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                if (await dataReader.ReadAsync())
+                {
+                    return dataReader.GetInt32(0) != 0;
+                }
+            }
+            catch (Exception e)
             {
-                return dataReader.GetInt32(0) != 0;
+                logger.LogError(e, "Check users are friends failed");
             }
 
             return false;
@@ -198,26 +242,27 @@ SELECT EXISTS
 
         public async Task<bool> MakeFriendsAsync(int userId, int friendId)
         {
-            var query =
+            try
+            {
+                var query =
 @"
 INSERT INTO UsersToUsers (UserId, FriendId)
 VALUES (@UserId, @FriendId);
 ";
-            await using var connection = new MySqlConnection(connectionString);
+                await using var connection = new MySqlConnection(connectionString);
 
-            await using var command = new MySqlCommand(query, connection);
-            command.Parameters.Add("UserId", MySqlDbType.Int32).Value = userId;
-            command.Parameters.Add("FriendId", MySqlDbType.Int32).Value = friendId;
+                await using var command = new MySqlCommand(query, connection);
+                command.Parameters.Add("UserId", MySqlDbType.Int32).Value = userId;
+                command.Parameters.Add("FriendId", MySqlDbType.Int32).Value = friendId;
 
-            await connection.OpenAsync();
+                await connection.OpenAsync();
 
-            try
-            {
                 return await command.ExecuteNonQueryAsync() > 0;
             }
-            catch
+            catch (Exception e)
             {
-                // TODO: log
+                logger.LogError(e, "Make users friends failed");
+
                 return false;
             }
         }

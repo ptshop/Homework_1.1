@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 using www.Cryptography;
 using www.DataAccess;
 using www.Services.Users;
@@ -36,7 +37,11 @@ namespace www
 
             // TODO: Вынести в конфиг
             var connectionString = "server=localhost;Port=3306;user id=social_network_user;Password=social_network_user;persistsecurityinfo=True;database=social_network;CharSet=utf8;SslMode=none";
-            services.AddTransient<IUserRepository, UserRepository>(p => new UserRepository(connectionString));
+            services.AddTransient<IUserRepository, UserRepository>(p =>
+            {
+                var logger = p.GetService<ILogger<IUserRepository>>();
+                return new UserRepository(connectionString, logger);
+            });
 
             services.AddRazorPages();
         }
