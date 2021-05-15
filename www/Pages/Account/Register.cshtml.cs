@@ -16,20 +16,20 @@ namespace www.Pages.Account
         public string ReturnUrl { get; set; }
 
         [Display(Name = "Имя")]
-        [Required(ErrorMessage = "Укажите имя")]
+        [Required(ErrorMessage = "укажите имя")]
         public string Name { get; set; }
 
         [Display(Name = "Фамилия")]
-        [Required(ErrorMessage = "Укажите фамилию")]
+        [Required(ErrorMessage = "укажите фамилию")]
         public string Surname { get; set; }
 
         [Display(Name = "Возраст")]
-        [Required(ErrorMessage = "Укажите возраст")]
-        [Range(1, 150, ErrorMessage = "Значения от 1 до 150")]
+        [Required(ErrorMessage = "укажите возраст")]
+        [Range(1, 150, ErrorMessage = "значения от 1 до 150")]
         public int Age { get; set; } = 18;
 
         [Display(Name = "Пол")]
-        [Required(ErrorMessage = "Укажите пол")]
+        [Required(ErrorMessage = "укажите пол")]
         public Genders? Gender { get; set; }
 
         [Display(Name = "Интересы")]
@@ -39,17 +39,17 @@ namespace www.Pages.Account
         public string City { get; set; }
 
         [Display(Name = "Логин")]
-        [Required(ErrorMessage = "Укажите логин")]
+        [Required(ErrorMessage = "укажите логин")]
         public string Login { get; set; }
 
         [Display(Name = "Пароль")]
-        [Required(ErrorMessage = "Укажите пароль")]
-        [MinLength(6, ErrorMessage = "Минимальная длина 6 символов")]
+        [Required(ErrorMessage = "укажите пароль")]
+        [MinLength(6, ErrorMessage = "минимум 6 символов")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
-        [Display(Name = "Подтвердите пароль")]
-        [Compare(nameof(Password), ErrorMessage = "Пароли не совпадают")]
+        [Display(Name = "Пароль еще раз")]
+        [Compare(nameof(Password), ErrorMessage = "пароли не совпадают")]
         [DataType(DataType.Password)]
         public string PasswordConfirm { get; set; }
 
