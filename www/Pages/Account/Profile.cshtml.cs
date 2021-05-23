@@ -41,6 +41,11 @@ namespace www.Pages.Account
         {
             var currentUserId = HttpContext.GetCurrentUserId();
 
+            if (Id == 0 && currentUserId != 0)
+            {
+                return RedirectToPage("Profile", new { id = currentUserId });
+            }
+
             var user = await userService.GetUserAsync(Id);
             if (user == null)
                 return NotFound();
