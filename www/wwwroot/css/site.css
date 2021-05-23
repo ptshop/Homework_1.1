@@ -1,6 +1,39 @@
 ﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
 for details on configuring this project to bundle and minify static web assets. */
 
+form, .form {
+    width: 350px;
+}
+
+.form-item {
+    display: flex;
+    margin: 10px 0px    ;
+    justify-content: space-between;
+}
+
+.form-item .form-item-label {
+    flex-grow: 1;
+}
+
+.form-item .form-item-field {
+    width: 200px;
+}
+
+.form-item .form-item-field>input {
+    width: 100%;
+}
+
+.form-item .form-item-error {
+    color: red;
+    display: block;
+}
+
+.form-action-container {
+    display: flex;
+    margin-top: 20px;
+    justify-content: space-between;
+}
+
 a.navbar-brand {
   white-space: normal;
   text-align: center;

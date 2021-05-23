@@ -6,30 +6,30 @@
 }
 
 <h1>@ViewData["Title"]</h1>
-<div>
-    <div>
-        <label asp-for="Name"></label>
-        <div>@Model.Name</div>
+<div class="form">
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Name"></label>
+        <div class="form-item-field">@Model.Name</div>
     </div>
-    <div>
-        <label asp-for="Surname"></label>
-        <div>@Model.Surname</div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Surname"></label>
+        <div class="form-item-field">@Model.Surname</div>
     </div>
-    <div>
-        <label asp-for="Age"></label>
-        <div>@Model.Age</div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Age"></label>
+        <div class="form-item-field">@Model.Age</div>
     </div>
-    <div>
-        <label asp-for="Gender"></label>
-        <div>@Model.Gender.Display()</div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Gender"></label>
+        <div class="form-item-field">@Model.Gender.Display()</div>
     </div>
-    <div>
-        <label asp-for="Interest"></label>
-        <div>@Model.Interest</div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Interest"></label>
+        <div class="form-item-field">@Model.Interest</div>
     </div>
-    <div>
-        <label asp-for="City"></label>
-        <div>@Model.City</div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="City"></label>
+        <div class="form-item-field">@Model.City</div>
     </div>
     <div id="isFriend" style="@(!Model.IsFriend ? "display: none;" : "")">Ваш друг</div>
     @if (Model.CanAddToFriends)

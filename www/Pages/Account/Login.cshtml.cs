@@ -15,11 +15,11 @@ namespace www.Pages.Account
         public string ReturnUrl { get; set; }
 
         [Display(Name = "Логин")]
-        [Required(ErrorMessage = "Укажите логин")]
+        [Required(ErrorMessage = "укажите логин")]
         public string Login { get; set; }
 
         [Display(Name = "Пароль")]
-        [Required(ErrorMessage = "Укажите пароль")]
+        [Required(ErrorMessage = "укажите пароль")]
         [DataType(DataType.Password)]
         public string Password { get; set; }
 

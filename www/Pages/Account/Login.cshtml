@@ -7,19 +7,25 @@
 <h1>@ViewData["Title"]</h1>
 <form method="POST" asp-antiforgery="true">
     <div class="validation" asp-validation-summary="ModelOnly"></div>
-    <input hidden asp-for="ReturnUrl"/>
-    <div>
-        <label asp-for="Login"></label>
-        <input asp-for="Login" />
-        <span asp-validation-for="Login"></span>
+    <input hidden asp-for="ReturnUrl" />
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Login"></label>
+        <div class="form-item-field">
+            <input asp-for="Login" />
+            <span class="form-item-error" asp-validation-for="Login"></span>
+        </div>
     </div>
-    <div>
-        <label asp-for="Password"></label>
-        <input asp-for="Password" />
-        <span asp-validation-for="Password"></span>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Password"></label>
+        <div class="form-item-field">
+            <input asp-for="Password" />
+            <span class="form-item-error" asp-validation-for="Password"></span>
+        </div>
     </div>
-    <input type="submit" value="Войти" />
-    <a asp-page="/Account/Register" asp-route-ReturnUrl="@Model.ReturnUrl">Зарегистрироваться</a>
+    <div class="form-action-container">
+        <a asp-page="/Account/Register" asp-route-ReturnUrl="@Model.ReturnUrl">Зарегистрироваться</a>
+        <input type="submit" value="Войти" />
+    </div>
 </form>
 
 @section scripts
