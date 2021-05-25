@@ -35,8 +35,6 @@ namespace www.Services.Users
                 City = city
             };
 
-            // TODO: Не ставится Id пользователя
-
             var userAdded = await userRepository.AddUserAsync(user);
             if (!userAdded)
                 return Result<User>.FailedResult("Регистрация завершилась неуспешно");
