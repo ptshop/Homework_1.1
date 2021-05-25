@@ -117,7 +117,11 @@ VALUES (@Login, @PasswordHash, @Name, @Surname, @Age, @Gender, @Interest, @City)
 
                 await connection.OpenAsync();
 
-                return await command.ExecuteNonQueryAsync() > 0;
+                var userInserted = await command.ExecuteNonQueryAsync() > 0;
+                if (userInserted)
+                    user.Id = (int)command.LastInsertedId;
+
+                return userInserted;
             }
             catch (Exception e)
             {
