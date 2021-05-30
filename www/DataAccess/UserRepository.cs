@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using MySql.Data.MySqlClient;
@@ -131,81 +132,98 @@ VALUES (@Login, @PasswordHash, @Name, @Surname, @Age, @Gender, @Interest, @City)
             }
         }
 
-        public async Task<User[]> GetUsersAsync()
+        public async Task<(User[], int)> GetUsersAsync(int skip, int take)
         {
             try
             {
-                var query = "SELECT Id, Name, Surname FROM Users;";
+                var queryMainPart = "FROM Users"; // TODO: Добавить WHERE Id > 0 для ускорения Count?
+ 
                 await using var connection = new MySqlConnection(connectionString);
-
-                await using var command = new MySqlCommand(query, connection);
-
                 await connection.OpenAsync();
 
-                var users = new List<User>();
-                await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await dataReader.ReadAsync())
+                var totalCount = await SelectCount(queryMainPart, connection);
+                if (totalCount > 0)
                 {
-                    users.Add(new User()
-                    {
-                        Id = dataReader.GetInt32("Id"),
-                        Name = dataReader.GetString("Name"),
-                        Surname = dataReader.GetString("Surname")
-                    });
-                }
+                    var query = "SELECT Id, Name, Surname " + queryMainPart + " LIMIT @Skip, @Take;";
 
-                return users.ToArray();
+                    await using var command = new MySqlCommand(query, connection);
+                    command.Parameters.Add("Skip", MySqlDbType.Int32).Value = skip;
+                    command.Parameters.Add("Take", MySqlDbType.Int32).Value = take;
+
+                    var users = new List<User>();
+                    await using (var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync())
+                    {
+                        while (await dataReader.ReadAsync())
+                        {
+                            users.Add(new User()
+                            {
+                                Id = dataReader.GetInt32("Id"),
+                                Name = dataReader.GetString("Name"),
+                                Surname = dataReader.GetString("Surname")
+                            });
+                        }
+                    }
+
+                    return (users.ToArray(), totalCount);
+                }
             }
             catch (Exception e)
             {
                 logger.LogError(e, "Get users failed");
             }
 
-            return Array.Empty<User>();
+            return (Array.Empty<User>(), 0);
         }
 
-        public async Task<User[]> GetFriendsAsync(int id)
+        public async Task<(User[], int)> GetFriendsAsync(int id, int skip, int take)
         {
             try
             {
-                var query =
+                var queryMainPart =
 @"
-SELECT u.Id, u.Name, u.Surname
   FROM Users u
   JOIN UsersToUsers utu ON
     utu.UserId = @Id  AND utu.FriendId = u.Id OR
-    utu.UserId = u.Id AND utu.FriendId = @Id 
+    utu.UserId = u.Id AND utu.FriendId = @Id
   WHERE
-    utu.UserId = @Id OR utu.FriendId = @Id;
+    utu.UserId = @Id OR utu.FriendId = @Id
 ";
 
                 await using var connection = new MySqlConnection(connectionString);
-
-                await using var command = new MySqlCommand(query, connection);
-                command.Parameters.Add("Id", MySqlDbType.Int32).Value = id;
-
                 await connection.OpenAsync();
 
-                var users = new List<User>();
-                await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
-                while (await dataReader.ReadAsync())
+                var idParameter = new MySqlParameter("Id", MySqlDbType.Int32) { Value = id };
+                var totalCount = await SelectCount(queryMainPart, connection, idParameter);
+                if (totalCount > 0)
                 {
-                    users.Add(new User()
-                    {
-                        Id = dataReader.GetInt32("Id"),
-                        Name = dataReader.GetString("Name"),
-                        Surname = dataReader.GetString("Surname")
-                    });
-                }
+                    var query = "SELECT u.Id, u.Name, u.Surname " + queryMainPart + " LIMIT @Skip, @Take;";
 
-                return users.ToArray();
+                    await using var command = new MySqlCommand(query, connection);
+                    command.Parameters.Add(idParameter);
+                    command.Parameters.Add("Skip", MySqlDbType.Int32).Value = skip;
+                    command.Parameters.Add("Take", MySqlDbType.Int32).Value = take;
+
+                    var users = new List<User>();
+                    await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                    while (await dataReader.ReadAsync())
+                    {
+                        users.Add(new User()
+                        {
+                            Id = dataReader.GetInt32("Id"),
+                            Name = dataReader.GetString("Name"),
+                            Surname = dataReader.GetString("Surname")
+                        });
+                    }
+
+                    return (users.ToArray(), totalCount);
+                }
             }
             catch (Exception e)
             {
                 logger.LogError(e, "Get friends failed");
             }
 
-            return Array.Empty<User>();
+            return (Array.Empty<User>(), 0);
         }
         
         public async Task<bool> UsersAreFriendsAsync(int id1, int id2)
@@ -230,7 +248,7 @@ SELECT EXISTS
 
                 await connection.OpenAsync();
 
-                await using var dataReader = (MySqlDataReader)await command.ExecuteReaderAsync();
+                await using var dataReader = await command.ExecuteReaderAsync();
                 if (await dataReader.ReadAsync())
                 {
                     return dataReader.GetInt32(0) != 0;
@@ -269,6 +287,22 @@ VALUES (@UserId, @FriendId);
 
                 return false;
             }
+        }
+
+        private static async Task<int> SelectCount(string queryMainPart, MySqlConnection connection, params MySqlParameter[] parameters)
+        {
+            var query = "SELECT Count(1) " + queryMainPart + ';';
+
+            await using var command = new MySqlCommand(query, connection);
+            command.Parameters.AddRange(parameters);
+
+            await using var dataReader = await command.ExecuteReaderAsync();
+            if (await dataReader.ReadAsync())
+            {
+                return dataReader.GetInt32(0);
+            }
+
+            return 0;
         }
     }
 }

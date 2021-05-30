@@ -12,6 +12,7 @@
     <Folder Include="Pages\Account\Extensions\" />
     <Folder Include="DataAccess\" />
     <Folder Include="Cryptography\" />
+    <Folder Include="ViewModels\" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MySql.Data" Version="8.0.23" />

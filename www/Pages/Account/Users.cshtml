@@ -11,3 +11,5 @@
         <a class="nav-link" asp-page="/Account/Profile" asp-route-id="@user.Id">@user.Name @user.Surname</a>
     }
 </div>
+
+@await Html.PartialAsync("_Paginator", Model.PageViewModel)

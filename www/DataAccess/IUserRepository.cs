@@ -8,8 +8,8 @@ namespace www.DataAccess
         Task<User> GetUserAsync(int id);
         Task<User> GetUserAsync(string login);
         Task<bool> AddUserAsync(User user);
-        Task<User[]> GetUsersAsync();
-        Task<User[]> GetFriendsAsync(int id);
+        Task<(User[], int)> GetUsersAsync(int skip, int take);
+        Task<(User[], int)> GetFriendsAsync(int id, int skip, int take);
         Task<bool> UsersAreFriendsAsync(int id1, int id2);
         Task<bool> MakeFriendsAsync(int userId, int friendId);
     }

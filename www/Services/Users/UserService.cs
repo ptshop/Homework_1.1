@@ -58,9 +58,9 @@ namespace www.Services.Users
 
         public Task<User> GetUserAsync(string login) => userRepository.GetUserAsync(login);
 
-        public Task<User[]> GetUsersAsync() => userRepository.GetUsersAsync();
+        public Task<(User[], int)> GetUsersAsync(int skip, int take) => userRepository.GetUsersAsync(skip, take);
 
-        public Task<User[]> GetFriendsAsync(int id) => userRepository.GetFriendsAsync(id);
+        public Task<(User[], int)> GetFriendsAsync(int id, int skip, int take) => userRepository.GetFriendsAsync(id, skip, take);
         
         public Task<bool> UsersAreFriendsAsync(int id1, int id2) => userRepository.UsersAreFriendsAsync(id1, id2);
 

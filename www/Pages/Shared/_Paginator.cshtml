@@ -1,0 +1,18 @@
+﻿@model www.ViewModels.PageViewModel
+
+@if (Model.HasPreviousPage)
+{
+    <a asp-route-p="@(Model.PageNumber - 1)"
+       class="btn btn-outline-dark">
+        &lt;&lt;
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
+@if (Model.HasNextPage)
+{
+    <a asp-route-p="@(Model.PageNumber + 1)"
+       class="btn btn-outline-dark">
+        &gt;&gt;
+        <i class="glyphicon glyphicon-chevron-right"></i>
+    </a>
+}
