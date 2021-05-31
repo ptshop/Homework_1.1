@@ -9,8 +9,8 @@ namespace www.Services.Users
         Task<Result<User>> LoginAsync(string login, string password);
         Task<User> GetUserAsync(int id);
         Task<User> GetUserAsync(string login);
-        Task<User[]> GetUsersAsync();
-        Task<User[]> GetFriendsAsync(int id);
+        Task<(User[], int)> GetUsersAsync(int skip, int take);
+        Task<(User[], int)> GetFriendsAsync(int id, int skip, int take);
         Task<bool> UsersAreFriendsAsync(int id1, int id2);
         Task<Result> MakeFriendsAsync(int userId, int friendId);
     }
