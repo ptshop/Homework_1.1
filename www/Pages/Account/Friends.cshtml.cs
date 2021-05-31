@@ -16,17 +16,17 @@ namespace www.Pages.Account
 
         public PageViewModel PageViewModel { get; set; }
 
-        public async Task<IActionResult> OnGetAsync([FromServices] IUserService userService, [FromQuery(Name = "p")] int page = 1)
+        public async Task<IActionResult> OnGetAsync([FromServices] IUserService userService, [FromQuery(Name = "p")] int pageNumber = 1)
         {
             const int pageSize = 20;
 
             var currentUserId = HttpContext.GetCurrentUserId();
 
-            var skip = (page - 1) * pageSize;
+            var skip = (pageNumber - 1) * pageSize;
             var (friends, totalCount) = await userService.GetFriendsAsync(currentUserId, skip, pageSize);
 
             Friends = friends;
-            PageViewModel = new PageViewModel(totalCount, page, pageSize);
+            PageViewModel = new PageViewModel(totalCount, pageNumber, pageSize);
 
             return Page();
         }
