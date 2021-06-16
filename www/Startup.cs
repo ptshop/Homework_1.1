@@ -36,7 +36,7 @@ namespace www
             services.AddTransient<IUserService, UserService>();
 
             // TODO: Вынести в конфиг
-            var connectionString = "server=localhost;Port=3306;user id=social_network_user;Password=social_network_user;persistsecurityinfo=True;database=social_network;CharSet=utf8;SslMode=none";
+            var connectionString = "server=eu-cdbr-west-01.cleardb.com;Port=3306;user id=b030bcbd4ab81a;Password=ab55b16e;persistsecurityinfo=True;database=heroku_9190b58e5c9ad84;CharSet=utf8;SslMode=none";
             services.AddTransient<IUserRepository, UserRepository>(p =>
             {
                 var logger = p.GetService<ILogger<IUserRepository>>();
