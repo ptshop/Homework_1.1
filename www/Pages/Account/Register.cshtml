@@ -1,0 +1,92 @@
+﻿@page
+@using www.Models
+@using www.Pages.Account.Extensions
+@model www.Pages.Account.RegisterModel
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+<h1>@ViewData["Title"]</h1>
+<form method="POST" asp-antiforgery="true">
+    <div class="validation" asp-validation-summary="ModelOnly"></div>
+    <input hidden asp-for="ReturnUrl" />
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Name"></label>
+        <div class="form-item-field">
+            <input asp-for="Name" />
+            <span class="form-item-error" asp-validation-for="Name"></span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Surname"></label>
+        <div class="form-item-field">
+            <input asp-for="Surname" />
+            <span class="form-item-error" asp-validation-for="Surname"></span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Age"></label>
+        <div class="form-item-field">
+            <input asp-for="Age" />
+            <span class="form-item-error" asp-validation-for="Age"></span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Gender"></label>
+        <div class="form-item-field">
+            <label for="maleRadio">
+                <input id="maleRadio" type="radio" asp-for="Gender" value="@Genders.Male" />
+                <span>@Genders.Male.Display()</span>
+            </label>
+            <label for="femaleRadio">
+                <input id="femaleRadio" type="radio" asp-for="Gender" value="@Genders.Female" />
+                <span>@Genders.Female.Display()</span>
+            </label>
+            <span class="form-item-error" asp-validation-for="Gender"></span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Interest"></label>
+        <div class="form-item-field">
+            <input asp-for="Interest" />
+            <span class="form-item-error" asp-validation-for="Interest"></span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="City"></label>
+        <div class="form-item-field">
+            <input asp-for="City" />
+            <span class="form-item-error" asp-validation-for="City"></span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Login"></label>
+        <div class="form-item-field">
+            <input asp-for="Login" />
+            <span class="form-item-error" asp-validation-for="Login"></span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="Password"></label>
+        <div class="form-item-field">
+            <input asp-for="Password" />
+            <span class="form-item-error" asp-validation-for="Password"></span>
+        </div>
+    </div>
+    <div class="form-item">
+        <label class="form-item-label" asp-for="PasswordConfirm"></label>
+        <div class="form-item-field">
+            <input asp-for="PasswordConfirm" />
+            <span class="form-item-error" asp-validation-for="PasswordConfirm"></span>
+        </div>
+    </div>
+    <div class="form-action-container">
+        <label></label>
+        <input class="btn btn-primary" type="submit" value="Зарегистрироваться" />
+    </div>
+</form>
+
+@section scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

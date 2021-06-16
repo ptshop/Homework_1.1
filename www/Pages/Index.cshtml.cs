@@ -14,7 +14,6 @@ namespace www.Pages
 
         public void OnGet()
         {
-
         }
     }
 }

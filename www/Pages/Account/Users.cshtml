@@ -1,0 +1,15 @@
+﻿@page
+@model www.Pages.Account.UsersModel
+@{
+    ViewData["Title"] = "Люди";
+}
+
+<h1>@ViewData["Title"]</h1>
+<div>
+    @foreach (var user in Model.Users)
+    {
+        <a class="nav-link" asp-page="/Account/Profile" asp-route-id="@user.Id">@user.Name @user.Surname</a>
+    }
+</div>
+
+@await Html.PartialAsync("_Paginator", Model.PageViewModel)
